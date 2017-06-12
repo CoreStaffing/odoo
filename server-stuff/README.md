@@ -4,7 +4,7 @@
 
 From the [Google Cloud Platform Console](https://console.cloud.google.com), select Compute Engine and create a new VM instance with the following settings:
 
-![Screenshot of VM settings](create-vm-settings.png)
+![Screenshot of VM settings](readme-imgs/create-vm-settings.png)
 
 Note the following important settings:
 
@@ -18,12 +18,12 @@ Note the following important settings:
 
 * By default all ipv4 addresses routing to VMs are empheral. To promote our VM's ipv4 address to static locate the address under Networking > External IP addresses and select Type: Static
 
-![Screenshot of ip settings](ip-settings.png)
+![Screenshot of ip settings](readme-imgs/ip-settings.png)
 
 ## 3. Install Docker Community Edition
 
 * Connect to the new server via SSH by tapping SSH in the server list
-![Screenshot of VM list](vm-list.png)
+![Screenshot of VM list](readme-imgs/vm-list.png)
 
 * Complete the [Docker installation instructions for Debian](https://docs.docker.com/engine/installation/linux/debian/)
 
@@ -39,11 +39,11 @@ Note the following important settings:
 
 * Visit http://[server ip] to verify odoo is running. You should see login prompt like below. The default credentials are `user@example.com` / `bitnami`
 
-![Screenshot of odoo web login](web-login.png)
+![Screenshot of odoo web login](readme-imgs/web-login.png)
 
 ## 5. Configure Odoo to start on (re)boot
 
-* Copy `odoo-start` to /etc/init.d.
+* Copy `scripts/odoo-start` to /etc/init.d.
 
 * Run `sudo chmod 755 /etc/init.d/odoo-start` to make the odoo startup script executable.
 
@@ -55,11 +55,11 @@ Note the following important settings:
 
 * Create a cloud storage bucket with the following settings
 
-![Screenshot of cloud storage settings](storage-settings.png)
+![Screenshot of cloud storage settings](readme-imgs/storage-settings.png)
 
 * Note especially the **Regional** setting. This is the level which qualifies for free-tier allowance. Selecting us-east1 ensures the fastest connection to our us-east1 based server and saves us from paying any inter-region bandwidth usage.
 
-* Copy `odoo-backup.sh` from this repo to `/usr/local/sbin/`.
+* Copy `scripts/odoo-backup.sh` from this repo to `/usr/local/sbin/`.
 
 * Run `sudo chmod 755 /usr/local/sbin/odoo-backup.sh` to make the backup script executable.
 
@@ -71,6 +71,6 @@ Free tier provides 5GB of free storage. To keep the accumulated backups from exc
 
 * Go to [Cloud Functions](https://console.cloud.google.com/functions) in the Console.
 
-* Create a new Cloud Function with the following settings. Copy & Paste `package.json` and `index.js` from this repo
+* Create a new Cloud Function with the following settings. Copy & Paste `package.json` and `index.js` from the `scripts` subdirectory in this repo
 
-![Screenshot of cloud function settings](cloud-func-settings.png)
+![Screenshot of cloud function settings](readme-imgs/cloud-func-settings.png)
