@@ -33,13 +33,11 @@ Note the following important settings:
 
 ## 4. Install Odoo container images
 
-* Copy `docker-compose.yml` from the [Bitnami Odoo docker image repo](https://github.com/bitnami/bitnami-docker-odoo/blob/master/docker-compose.yml)
+* Copy `docker-compose.yml` from the [Odoo Docker Store](https://store.docker.com/images/odoo)
 
 * Run `sudo docker-compose up -d` to start odoo. The first run will take several minutes to complete.
 
-* Visit http://[server ip] to verify odoo is running. You should see login prompt like below. The default credentials are `user@example.com` / `bitnami`
-
-![Screenshot of odoo web login](readme-imgs/web-login.png)
+* Visit http://[server ip] to verify odoo is running.
 
 ## 5. Configure Odoo to start on (re)boot
 
