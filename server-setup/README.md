@@ -35,9 +35,11 @@ Note the following important settings:
 
 * Copy `docker-compose.yml` from the [Odoo Docker Store](https://store.docker.com/images/odoo)
 
+* Change line 8 of `docker-compose.yml` from `      - "80:8069"` to `      - "8069:8069"`
+
 * Run `sudo docker-compose up -d` to start odoo. The first run will take several minutes to complete.
 
-* Visit http://[server ip] to verify odoo is running.
+* Visit http://[server ip]:8069 to verify odoo is running.
 
 ## 5. Configure Odoo to start on (re)boot
 
@@ -72,3 +74,51 @@ Free tier provides 5GB of free storage. To keep the accumulated backups from exc
 * Create a new Cloud Function with the following settings. Copy & Paste `package.json` and `index.js` from the `scripts` subdirectory in this repo
 
 ![Screenshot of cloud function settings](readme-imgs/cloud-func-settings.png)
+
+## 8. Configure nginx reverse proxy server
+
+* Run `sudo apt-get install nginx` to install nginx
+
+* Run `sudo systemctl enable nginx` to enable nginx to restart automatically when the server restarts
+
+* Modify `/etc/nginx/sites-enabled/default` Under the section `server` => `location /` comment out `try_files $uri $uri/ =404;` and directly beneath that line add `proxy_pass http://127.0.0.1:8069/;`
+
+* Run `sudo nginx -t` to confirm changes are valid.
+
+* Restart nginx `sudo systemctl restart nginx`
+
+* Test the nginx setup by visiting http://[server ip]. You should see the odoo welcome screen.
+
+## 9. Add DNS Entries
+
+* Add A record to point odoo.corestaffing.us to our odoo server
+`odoo.corestaffing.us A 104.196.117.29`
+
+* Add CNAME record to point jobs.corestaffing.us to wherever our odoo server is
+`jobs.corestaffing.us CNAME odoo.corestaffing.us` 
+
+* Add SPF record so receivers don't mark as spam @corestaffing.us addressed mail originating from google or our odoo server `corestaffing.us TXT "v=spf1 include:_spf.google.com include:odoo.corestaffing.us ~all"`
+
+## 10. Set up HTTPS
+
+* Run `sudo apt-get install certbot -t jessie-backports` to install Let's Encrypt certbot
+
+* Modify nginx settings to allow access to webroot certbot validation public keys in `/etc/nginx/sites-available/default`. Underneath the existing `location /` block add a new block
+```location ~ /.well-known {
+	allow all;
+}```
+
+* Run `sudo certbot certonly -a webroot --webroot-path=/var/www/html -d odoo.corestaffing.us -d jobs.coresta
+ffing.us` to generate certificates
+
+* Generate a strong Diffie-Hellman group by running `sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048`. This takes several minutes to run on a micro instance
+
+* Copy `nginx/ssl-odoo.corestaffing.us.conf` from this repo to `/etc/nginx/snippets/ssl-odoo.corestaffing.us.conf`
+
+* Copy `nginx/ssl-params.conf` from this repo to `/etc/nginx/snippets/ssl-params.conf`
+
+* Copy `nginx/default` from this repo to `/etc/nginx/sites-available/default`
+
+* Restart nginx `sudo systemctl restart nginx`
+
+* Add the job to cron to check and renew the certificate as needed. Run `sudo crontab -e` and add a new cron entry `45 8 * * * /usr/bin/certbot renew --noninteractive --renew-hook "/bin/systemctl reload nginx" >> /var/log/le-renew.log` at the bottom of the file
