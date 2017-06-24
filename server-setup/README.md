@@ -104,9 +104,11 @@ Free tier provides 5GB of free storage. To keep the accumulated backups from exc
 * Run `sudo apt-get install certbot -t jessie-backports` to install Let's Encrypt certbot
 
 * Modify nginx settings to allow access to webroot certbot validation public keys in `/etc/nginx/sites-available/default`. Underneath the existing `location /` block add a new block
-```location ~ /.well-known {
+```
+location ~ /.well-known {
 	allow all;
-}```
+}
+```
 
 * Run `sudo certbot certonly -a webroot --webroot-path=/var/www/html -d odoo.corestaffing.us -d jobs.coresta
 ffing.us` to generate certificates
