@@ -110,8 +110,7 @@ location ~ /.well-known {
 }
 ```
 
-* Run `sudo certbot certonly -a webroot --webroot-path=/var/www/html -d odoo.corestaffing.us -d jobs.coresta
-ffing.us` to generate certificates
+* Run `sudo certbot certonly -a webroot --webroot-path=/var/www/html -d odoo.corestaffing.us -d jobs.corestaffing.us` to generate certificates
 
 * Generate a strong Diffie-Hellman group by running `sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048`. This takes several minutes to run on a micro instance
 
